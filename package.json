@@ -28,7 +28,8 @@
     "@middy/http-error-handler": "^3.0.3",
     "@middy/http-json-body-parser": "^2.5.3",
     "@middy/validator": "^3.0.3",
-    "aws-sdk": "^2.1145.0"
+    "aws-sdk": "^2.1145.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@serverless/typescript": "^2.23.0",

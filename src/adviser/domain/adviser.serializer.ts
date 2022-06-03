@@ -1,18 +1,11 @@
 import { identityDatabase as ID } from 'src/shared/helper/identity.database'
-import { BaseModel } from 'src/shared/persistence/dynamodb/domain/base.model-dynamodb'
+import { BaseSerializer } from '@shared/persistence/dynamodb/domain/dynamodb.serializer'
 
 import type { AdviserModel } from './adviser.model'
 
-export class AdviserSerializer extends BaseModel {
+export class AdviserSerializer extends BaseSerializer {
   constructor(private data?: AdviserModel) {
     super()
-  }
-
-  toItems(): Record<string, unknown> {
-    return {
-      ...this.keys(),
-      ...this.toRemoveKey(),
-    }
   }
 
   toRemoveKey(): Record<string, unknown> {

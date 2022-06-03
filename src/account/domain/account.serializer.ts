@@ -1,9 +1,9 @@
 import { identityDatabase as ID } from 'src/shared/helper/identity.database'
-import { BaseModel } from 'src/shared/persistence/dynamodb/domain/base.model-dynamodb'
+import { BaseSerializer } from '@shared/persistence/dynamodb/domain/dynamodb.serializer'
 
 import type { AccountModel } from './account.model'
 
-export class AccountSerializer extends BaseModel {
+export class AccountSerializer extends BaseSerializer {
   constructor(private data: AccountModel) {
     super()
   }

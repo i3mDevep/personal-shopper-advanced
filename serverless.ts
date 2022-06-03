@@ -1,5 +1,6 @@
 import type { AWS } from '@serverless/typescript'
-import PersonalShopperTable from 'src/aws/resources/personal.table'
+import PersonalShopperTable from 'src/stack/resources/personal.table'
+import MeetingTable from 'src/stack/resources/meeting.table'
 
 import {
   adviserCreate,
@@ -13,6 +14,12 @@ import {
   accountUpdate,
   accountCreate,
 } from './src/account/adapter/http'
+import {
+  clientCreate,
+  clientGet,
+  clientUpdate,
+} from './src/client/adapter/http'
+import { puto } from './src/test'
 
 const serverlessConfiguration: AWS = {
   service: 'personal-shopper-advanced',
@@ -41,6 +48,27 @@ const serverlessConfiguration: AWS = {
         ],
         Resource: [{ 'Fn::GetAtt': ['PersonalShopperTable', 'Arn'] }],
       },
+      {
+        Effect: 'Allow',
+        Action: [
+          'chime:CreateMeeting',
+          'chime:TagMeeting',
+          'chime:TagResource',
+          'chime:DeleteMeeting',
+          'chime:GetMeeting',
+          'chime:ListMeetings',
+          'chime:BatchCreateAttendee',
+          'chime:CreateAttendee',
+          'chime:DeleteAttendee',
+          'chime:GetAttendee',
+          'chime:ListAttendees',
+          'chime:StartMeetingTranscription',
+          'chime:StopMeetingTranscription',
+          'chime:CreateMediaCapturePipeline',
+          'chime:DeleteMediaCapturePipeline',
+        ],
+        Resource: '*',
+      },
     ],
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -52,6 +80,7 @@ const serverlessConfiguration: AWS = {
       REGION: '${self:custom.region}',
       STAGE: '${self:custom.stage}',
       PERSONAL_SHOPPER_TABLE: '${self:custom.personalTable}',
+      MEETING_TABLE: '${self:custom.meetingTable}',
     },
     lambdaHashingVersion: '20201221',
   },
@@ -64,10 +93,15 @@ const serverlessConfiguration: AWS = {
     adviserForState,
     handlerGetAdviser,
     handlerUpdateAdviser,
+    clientCreate,
+    clientGet,
+    clientUpdate,
+    puto,
   },
   resources: {
     Resources: {
       ...PersonalShopperTable,
+      ...MeetingTable,
     },
   },
   package: { individually: true },
@@ -81,6 +115,7 @@ const serverlessConfiguration: AWS = {
       },
     },
     personalTable: 'PersonalShopperDB--${opt:stage, self:provider.stage}',
+    meetingTable: 'MeetingDB--${opt:stage, self:provider.stage}',
     esbuild: {
       bundle: true,
       minify: false,

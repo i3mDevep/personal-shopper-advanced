@@ -13,22 +13,20 @@ const tableName = process.env.PERSONAL_SHOPPER_TABLE
 class AccountHttpAdapter {
   constructor(private operation: AccountApplication) {}
 
-  handlerGet: ValidatedEventAPIGatewayProxyEvent<typeof createSchemaAccount> =
-    async (event) => {
-      const { account } = event.pathParameters
-      const accountModel = new AccountModel(account)
-      const accontSerializer = new AccountSerializer(accountModel)
+  handlerGet = async (event) => {
+    const { account } = event.pathParameters
+    const accountModel = new AccountModel(account)
+    const accontSerializer = new AccountSerializer(accountModel)
 
-      const res = await this.operation.getItem({
-        PK: accontSerializer.pk,
-        SK: accontSerializer.sk,
-      })
+    const res = await this.operation.getItem({
+      ...accontSerializer.keys(),
+    })
 
-      return HttpResponse.response(res)
-    }
+    return HttpResponse.response(res)
+  }
 
   handlerCreateAccount: ValidatedEventAPIGatewayProxyEvent<
-    typeof updateSchemaAccount
+    typeof createSchemaAccount
   > = async (event) => {
     const { account, storeName, urlCss, templateEmail, templateNotifyClient } =
       event.body
