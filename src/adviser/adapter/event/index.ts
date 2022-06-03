@@ -1,7 +1,7 @@
 import { handlerPath } from '@shared/helper/context.route'
 
-export const puto = {
-  handler: `${handlerPath(__dirname)}/route.handler`,
+export const searchAvailableEvent = {
+  handler: `${handlerPath(__dirname)}/route.searchAdviserAvailable`,
   events: [
     {
       eventBridge: {

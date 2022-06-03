@@ -1,6 +1,9 @@
 import { EventBridge } from 'aws-sdk'
 
-const eventBridge = new EventBridge({ region: 'us-east-1' })
+const eventBridge = new EventBridge({
+  endpoint: 'http://127.0.0.1:4010',
+  region: 'us-east-1',
+})
 
 export class BridgeInfrastructure {
   constructor(private bus: string, private source: string) {}

@@ -14,6 +14,17 @@ export const clientGet = {
   ],
 }
 
+export const clientGetForState = {
+  handler: `${handlerPath(__dirname)}/route.handlerGetClientForState`,
+  events: [
+    {
+      http: {
+        method: 'get',
+        path: 'client/{account}/state/{state}',
+      },
+    },
+  ],
+}
 export const clientCreate = {
   handler: `${handlerPath(__dirname)}/route.handlerCreateClient`,
   events: [

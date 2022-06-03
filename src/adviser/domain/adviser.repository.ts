@@ -12,4 +12,8 @@ export interface AdviserRepository extends BaseRepository<AdviserModel> {
   getAdviserForAccount(
     account: string
   ): Promise<Result<AdviserModel | Record<string, unknown>>>
+
+  advicerSearchAvailable(
+    account: string
+  ): Promise<Result<AdviserModel | Record<string, unknown>>>
 }

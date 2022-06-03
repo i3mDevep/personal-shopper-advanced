@@ -7,6 +7,7 @@ import { AdviserModel } from '../../domain/adviser.model'
 import { AdviserInfrastructure } from '../../infrastructure/adviser.infrastructure'
 import { AdviserApplication } from '../../application/adviser.application'
 import { updateSchemaAdviser, createSchemaAdviser } from './schema'
+import { AdviserEventInfrastructure } from '../../infrastructure/adviser.event.infrastructure'
 
 const tableName = process.env.PERSONAL_SHOPPER_TABLE
 
@@ -95,7 +96,12 @@ class AdviserHttpAdapter {
 }
 
 const adviserInfrastructure = new AdviserInfrastructure(tableName)
-const adviserApplication = new AdviserApplication(adviserInfrastructure)
+const adviserEventInfrastructure = new AdviserEventInfrastructure()
+const adviserApplication = new AdviserApplication(
+  adviserInfrastructure,
+  adviserEventInfrastructure
+)
+
 const adviserAdapter = new AdviserHttpAdapter(adviserApplication)
 
 export const handlerGetAdviser = middyfy(adviserAdapter.handlerGetAdviser)

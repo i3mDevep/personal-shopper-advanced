@@ -41,7 +41,7 @@ export class ClientSerializer extends BaseSerializer {
   get stateRoleIndex(): string {
     if (!this.data.state) return undefined
 
-    return `${ID.Client}#${this.data.id}#${ID.State}#${this.data.state}`
+    return `${ID.Client}#${ID.State}#${this.data.state}`
   }
 
   get pk(): string {

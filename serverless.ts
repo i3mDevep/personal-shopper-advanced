@@ -9,6 +9,7 @@ import {
   handlerGetAdviser,
   handlerUpdateAdviser,
 } from './src/adviser/adapter/http'
+import { searchAvailableEvent } from './src/adviser/adapter/event'
 import {
   accountGet,
   accountUpdate,
@@ -18,6 +19,7 @@ import {
   clientCreate,
   clientGet,
   clientUpdate,
+  clientGetForState,
 } from './src/client/adapter/http'
 import { puto } from './src/test'
 
@@ -69,6 +71,11 @@ const serverlessConfiguration: AWS = {
         ],
         Resource: '*',
       },
+      {
+        Effect: 'Allow',
+        Action: 'events:*',
+        Resource: '*',
+      },
     ],
     apiGateway: {
       minimumCompressionSize: 1024,
@@ -81,6 +88,7 @@ const serverlessConfiguration: AWS = {
       STAGE: '${self:custom.stage}',
       PERSONAL_SHOPPER_TABLE: '${self:custom.personalTable}',
       MEETING_TABLE: '${self:custom.meetingTable}',
+      BUS_PERSONAL_SHOPPER: '${self:custom.busPersonalShopper}',
     },
     lambdaHashingVersion: '20201221',
   },
@@ -93,9 +101,11 @@ const serverlessConfiguration: AWS = {
     adviserForState,
     handlerGetAdviser,
     handlerUpdateAdviser,
+    searchAvailableEvent,
     clientCreate,
     clientGet,
     clientUpdate,
+    clientGetForState,
     puto,
   },
   resources: {
@@ -116,6 +126,7 @@ const serverlessConfiguration: AWS = {
     },
     personalTable: 'PersonalShopperDB--${opt:stage, self:provider.stage}',
     meetingTable: 'MeetingDB--${opt:stage, self:provider.stage}',
+    busPersonalShopper: 'PersonalShopperBUS--${opt:stage, self:provider.stage}',
     esbuild: {
       bundle: true,
       minify: false,

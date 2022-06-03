@@ -3,8 +3,9 @@ import { middyfy } from '@shared/helper/middyfy.lambda'
 import { ClientSerializer } from 'src/client/domain/client.serializer'
 import { HttpResponse } from '@shared/http/http.response'
 
+import { ClientEventInfrastructure } from '../../infrastructure/client.event.infrastructure'
 import { ClientModel } from '../../domain/client.model'
-import { ClientInfrastructure } from '../../infrastructure/client.infrastructure'
+import { ClientInfrastructure } from '../../infrastructure/client.store.infrastructure'
 import { ClientApplication } from '../../application/client.application'
 import { createSchemaClient, updateSchemaClient } from './schema'
 
@@ -19,6 +20,14 @@ class ClientHttpAdapter {
     const accontSerializer = new ClientSerializer(clientModel)
 
     const res = await this.operation.getItem({ ...accontSerializer.keys() })
+
+    return HttpResponse.response(res)
+  }
+
+  handlerGetClientForState = async (event) => {
+    const { account, state } = event.pathParameters
+
+    const res = await this.operation.getClientForState(account, state)
 
     return HttpResponse.response(res)
   }
@@ -71,11 +80,20 @@ class ClientHttpAdapter {
   }
 }
 
-const clientInfrastructure = new ClientInfrastructure(tableName)
-const clientApplication = new ClientApplication(clientInfrastructure)
+const clientStoreInfrastructure = new ClientInfrastructure(tableName)
+const clientEventInfrastructure = new ClientEventInfrastructure()
+
+const clientApplication = new ClientApplication(
+  clientStoreInfrastructure,
+  clientEventInfrastructure
+)
+
 const clientAdapter = new ClientHttpAdapter(clientApplication)
 
 export const handlerGetClient = middyfy(clientAdapter.handlerGetClient)
+export const handlerGetClientForState = middyfy(
+  clientAdapter.handlerGetClientForState
+)
 export const handlerUpdateClient = middyfy(
   clientAdapter.handlerUpdateClient,
   updateSchemaClient

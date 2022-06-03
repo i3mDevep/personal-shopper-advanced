@@ -1,5 +1,5 @@
 import { ResponseDto } from '@shared/persistence/dynamodb/application/response.dto'
-import type resultInterface from '@shared/persistence/dynamodb/application/result.interface'
+import type Result from '@shared/persistence/dynamodb/application/result.interface'
 import DynamoDBService from '@shared/persistence/dynamodb/infrastructure/dynamodb.infrastructure'
 import { identityDatabase as ID } from 'src/shared/helper/identity.database'
 
@@ -12,7 +12,7 @@ export class AdviserInfrastructure
 {
   async getAdviserForAccount(
     account: string
-  ): Promise<resultInterface<AdviserModel | Record<string, unknown>>> {
+  ): Promise<Result<AdviserModel | Record<string, unknown>>> {
     const res = await this.db
       .query({
         TableName: this.tableName,
@@ -32,7 +32,7 @@ export class AdviserInfrastructure
   async getAdviserForState(
     account: string,
     state: string
-  ): Promise<resultInterface<AdviserModel | Record<string, unknown>>> {
+  ): Promise<Result<AdviserModel | Record<string, unknown>>> {
     const res = await this.db
       .query({
         TableName: this.tableName,
@@ -48,5 +48,11 @@ export class AdviserInfrastructure
       .promise()
 
     return ResponseDto('123', res.Items, res.Count)
+  }
+
+  async advicerSearchAvailable(account: string) {
+    const res = await this.getAdviserForState(account, 'AVAILABLE')
+
+    return res
   }
 }

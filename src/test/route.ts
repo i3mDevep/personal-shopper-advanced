@@ -16,19 +16,19 @@ const operations = new MeetingApplication(
 )
 
 export const handler = async (event) => {
-  const res = await operations.joinMeeting(
-    '6be0c2b8-9d64-42de-ade1-c52e41b99028',
-    'test',
-    'guest'
-  )
+  // const res = await operations.joinMeeting(
+  //   '6be0c2b8-9d64-42de-ade1-c52e41b99028',
+  //   'test',
+  //   'guest'
+  // )
 
-  console.log({ res })
+  console.log('entre a test')
 
   return {
     statusCode: 200,
     body: JSON.stringify({
       message: 'Go Serverless v1.0! Your function executed successfully!',
-      input: res,
+      input: event,
     }),
   }
 }
