@@ -11,12 +11,12 @@ export class ClientSerializer extends BaseSerializer {
   toRemoveKey(): Record<string, unknown> {
     return {
       id: this.data.id,
-      stateRole: this.stateRoleIndex,
       GSI1PK: this.gsi1pk,
       GSI1SK: this.gsi1sk,
+      ...this.toKeyStateClientIndex(),
       account: this.data.account,
       state: this.data.state,
-      adviser: this.data.advisor,
+      advisor: this.data.advisor,
       fullName: this.data.fullName,
       email: this.data.email,
       phone: this.data.phone,
@@ -24,6 +24,23 @@ export class ClientSerializer extends BaseSerializer {
       meetAt: this.data.meetAt,
       finishAt: this.data.finishAt,
     }
+  }
+
+  toKeyStateClientIndex() {
+    return {
+      GSI1PK: this.stateClientPk,
+      stateClient: this.stateClientSk,
+    }
+  }
+
+  get stateClientPk(): string | undefined {
+    return this.gsi1pk
+  }
+
+  get stateClientSk(): string | undefined {
+    if (!this.data.state) return undefined
+
+    return `${ID.StateClient}#${this.data.state}`
   }
 
   get gsi1pk(): string | undefined {
@@ -36,12 +53,6 @@ export class ClientSerializer extends BaseSerializer {
     if (!this.data.advisor) return undefined
 
     return `${ID.Client}#${this.data.id}`
-  }
-
-  get stateRoleIndex(): string {
-    if (!this.data.state) return undefined
-
-    return `${ID.Client}#${ID.State}#${this.data.state}`
   }
 
   get pk(): string {

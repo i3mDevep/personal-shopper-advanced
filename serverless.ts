@@ -5,7 +5,6 @@ import MeetingTable from 'src/stack/resources/meeting.table'
 import {
   adviserCreate,
   adviserForAccount,
-  adviserForState,
   handlerGetAdviser,
   handlerUpdateAdviser,
 } from './src/adviser/adapter/http'
@@ -21,6 +20,7 @@ import {
   clientUpdate,
   clientGetForState,
 } from './src/client/adapter/http'
+import { handleClientCanceledEvent } from './src/client/adapter/event'
 import { puto } from './src/test'
 
 const serverlessConfiguration: AWS = {
@@ -98,14 +98,14 @@ const serverlessConfiguration: AWS = {
     accountCreate,
     adviserCreate,
     adviserForAccount,
-    adviserForState,
     handlerGetAdviser,
     handlerUpdateAdviser,
     searchAvailableEvent,
-    clientCreate,
     clientGet,
-    clientUpdate,
     clientGetForState,
+    clientCreate,
+    clientUpdate,
+    handleClientCanceledEvent,
     puto,
   },
   resources: {

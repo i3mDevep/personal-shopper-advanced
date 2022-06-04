@@ -1,3 +1,4 @@
+import { EventPersonalShopper } from '@shared/event-bridge/helper/event.personal-shopper'
 import { handlerPath } from '@shared/helper/context.route'
 
 export const searchAvailableEvent = {
@@ -8,7 +9,7 @@ export const searchAvailableEvent = {
         eventBus: process.env.BUS_PERSONAL_SHOPPER,
         pattern: {
           source: ['custom.personal-shopper'],
-          'detail-type': ['ClientCreated'],
+          'detail-type': [EventPersonalShopper.EVENT_CLIENT_CREATED],
         },
       },
     },

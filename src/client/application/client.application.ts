@@ -1,6 +1,7 @@
 import type { BridgeRepository } from '@shared/event-bridge/domain/event.repository'
 import { EventPersonalShopper } from '@shared/event-bridge/helper/event.personal-shopper'
 import BaseApplication from '@shared/persistence/dynamodb/application/dynamodb.application'
+import type Result from '@shared/persistence/dynamodb/application/result.interface'
 
 import type { ClientModel } from '../domain/client.model'
 import type { StoreRepository } from '../domain/client.store.repository'
@@ -11,6 +12,14 @@ export class ClientApplication extends BaseApplication<ClientModel> {
     private eventRepository: BridgeRepository
   ) {
     super(storeRepository)
+  }
+
+  getClienForState(
+    account: string,
+    adviser: string,
+    state: string
+  ): Promise<Result<ClientModel | Record<string, unknown>>> {
+    return this.storeRepository.getClienForState(account, adviser, state)
   }
 
   override create = async (
@@ -27,9 +36,5 @@ export class ClientApplication extends BaseApplication<ClientModel> {
     ])
 
     return res
-  }
-
-  async getClientForState(account: string, state: string) {
-    return this.storeRepository.getClientForState(account, state)
   }
 }

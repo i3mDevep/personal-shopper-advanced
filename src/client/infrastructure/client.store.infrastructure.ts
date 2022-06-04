@@ -10,18 +10,22 @@ export class ClientInfrastructure
   extends DynamoDBService<ClientModel>
   implements StoreRepository
 {
-  async getClientForState(
+  async getClienForState(
     account: string,
+    adviser: string,
     state: string
   ): Promise<Result<ClientModel | Record<string, unknown>>> {
+    console.log(`${ID.Account}#${account}#${ID.Adviser}#${adviser}`)
+    console.log(`${ID.StateClient}#${state}`)
+
     const res = await this.db
       .query({
         TableName: this.tableName,
-        IndexName: 'stateIndex',
-        KeyConditionExpression: 'account = :account and stateRole = :stateRole',
+        IndexName: 'stateClientIndex',
+        KeyConditionExpression: 'GSI1PK = :pk and stateClient = :sk',
         ExpressionAttributeValues: {
-          ':account': account,
-          ':stateRole': `${ID.Client}#${ID.State}#${state}`,
+          ':pk': `${ID.Account}#${account}#${ID.Adviser}#${adviser}`,
+          ':sk': `${ID.StateClient}#${state}`,
         },
       })
       .promise()

@@ -59,15 +59,3 @@ export const handlerUpdateAdviser = {
     },
   ],
 }
-
-export const adviserForState = {
-  handler: `${handlerPath(__dirname)}/route.handlerAdviserForState`,
-  events: [
-    {
-      http: {
-        method: 'get',
-        path: 'adviser/{account}/state/{state}',
-      },
-    },
-  ],
-}

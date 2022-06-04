@@ -1,11 +1,13 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway'
 import { middyfy } from '@shared/helper/middyfy.lambda'
 import { HttpResponse } from '@shared/http/http.response'
+import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 
 import { AdviserSerializer } from '../../domain/adviser.serializer'
 import { AdviserModel } from '../../domain/adviser.model'
 import { AdviserInfrastructure } from '../../infrastructure/adviser.infrastructure'
 import { AdviserApplication } from '../../application/adviser.application'
+import type { getSchemaAdviser } from './schema'
 import { updateSchemaAdviser, createSchemaAdviser } from './schema'
 import { AdviserEventInfrastructure } from '../../infrastructure/adviser.event.infrastructure'
 
@@ -14,7 +16,9 @@ const tableName = process.env.PERSONAL_SHOPPER_TABLE
 class AdviserHttpAdapter {
   constructor(private operation: AdviserApplication) {}
 
-  handlerGetAdviser = async (event) => {
+  handlerGetAdviser: ValidatedEventAPIGatewayProxyEvent<unknown> = async (
+    event
+  ) => {
     const { account, email } = event.pathParameters
     const accountModel = new AdviserModel(account, email)
     const accontSerializer = new AdviserSerializer(accountModel)
@@ -34,7 +38,7 @@ class AdviserHttpAdapter {
     const adviserModel = new AdviserModel(
       account,
       email,
-      'AVAILABLE',
+      StatePersonalShopper.AVAILABLE,
       fullName,
       true,
       new Date().getTime(),
@@ -50,18 +54,13 @@ class AdviserHttpAdapter {
     return HttpResponse.response(res)
   }
 
-  handlerAdviserForAccount = async (event) => {
+  handlerAdviserForAccount: ValidatedEventAPIGatewayProxyEvent<
+    typeof getSchemaAdviser
+  > = async (event) => {
     const { account } = event.pathParameters
+    const state = event.queryStringParameters?.state
 
-    const res = await this.operation.getAdviserForAccount(account)
-
-    return HttpResponse.response(res)
-  }
-
-  handlerAdviserForState = async (event) => {
-    const { state, account } = event.pathParameters
-
-    const res = await this.operation.getAdviserForState(account, state)
+    const res = await this.operation.getAdviserForAccount(account, state)
 
     return HttpResponse.response(res)
   }
@@ -113,10 +112,6 @@ export const handlerCreateAdviser = middyfy(
 
 export const handlerAdviserForAccount = middyfy(
   adviserAdapter.handlerAdviserForAccount
-)
-
-export const handlerAdviserForState = middyfy(
-  adviserAdapter.handlerAdviserForState
 )
 
 export const handlerUpdateAdviser = middyfy(

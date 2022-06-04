@@ -13,7 +13,7 @@ const tableName = process.env.PERSONAL_SHOPPER_TABLE
 class AccountHttpAdapter {
   constructor(private operation: AccountApplication) {}
 
-  handlerGet = async (event) => {
+  handlerGet: ValidatedEventAPIGatewayProxyEvent<unknown> = async (event) => {
     const { account } = event.pathParameters
     const accountModel = new AccountModel(account)
     const accontSerializer = new AccountSerializer(accountModel)

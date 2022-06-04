@@ -2,6 +2,8 @@ import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway'
 import { middyfy } from '@shared/helper/middyfy.lambda'
 import { ClientSerializer } from 'src/client/domain/client.serializer'
 import { HttpResponse } from '@shared/http/http.response'
+import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
+import { AdviserUnAssigned } from '@shared/helper/identity.database'
 
 import { ClientEventInfrastructure } from '../../infrastructure/client.event.infrastructure'
 import { ClientModel } from '../../domain/client.model'
@@ -14,20 +16,23 @@ const tableName = process.env.PERSONAL_SHOPPER_TABLE
 class ClientHttpAdapter {
   constructor(private operation: ClientApplication) {}
 
-  handlerGetClient = async (event) => {
+  handlerGetClientForState: ValidatedEventAPIGatewayProxyEvent<unknown> =
+    async (event) => {
+      const { account, adviser } = event.pathParameters
+      const state = event.queryStringParameters?.state
+      const res = await this.operation.getClienForState(account, adviser, state)
+
+      return HttpResponse.response(res)
+    }
+
+  handlerGetClient: ValidatedEventAPIGatewayProxyEvent<unknown> = async (
+    event
+  ) => {
     const { client } = event.pathParameters
     const clientModel = new ClientModel(client)
     const accontSerializer = new ClientSerializer(clientModel)
 
     const res = await this.operation.getItem({ ...accontSerializer.keys() })
-
-    return HttpResponse.response(res)
-  }
-
-  handlerGetClientForState = async (event) => {
-    const { account, state } = event.pathParameters
-
-    const res = await this.operation.getClientForState(account, state)
 
     return HttpResponse.response(res)
   }
@@ -40,8 +45,8 @@ class ClientHttpAdapter {
     const clientModel = new ClientModel(
       id,
       account,
-      'REQUESTING',
-      undefined,
+      StatePersonalShopper.REQUESTING,
+      AdviserUnAssigned,
       fullName,
       email,
       phone,
@@ -49,6 +54,7 @@ class ClientHttpAdapter {
     )
 
     const accontSerializer = new ClientSerializer(clientModel)
+
     const res = await this.operation.create(accontSerializer.toItems())
 
     return HttpResponse.response(res)
@@ -94,6 +100,7 @@ export const handlerGetClient = middyfy(clientAdapter.handlerGetClient)
 export const handlerGetClientForState = middyfy(
   clientAdapter.handlerGetClientForState
 )
+
 export const handlerUpdateClient = middyfy(
   clientAdapter.handlerUpdateClient,
   updateSchemaClient

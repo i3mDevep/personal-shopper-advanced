@@ -29,6 +29,7 @@ export const updateSchemaClient = {
         fullName: { type: 'string' },
         phone: { type: 'string' },
       },
+      required: ['account'],
     },
   },
 }

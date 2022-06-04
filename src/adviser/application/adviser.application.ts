@@ -1,5 +1,6 @@
 import type { BridgeRepository } from '@shared/event-bridge/domain/event.repository'
 import { EventPersonalShopper } from '@shared/event-bridge/helper/event.personal-shopper'
+import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 import BaseApplication from '@shared/persistence/dynamodb/application/dynamodb.application'
 
 import type { AdviserModel } from '../domain/adviser.model'
@@ -13,19 +14,15 @@ export class AdviserApplication extends BaseApplication<AdviserModel> {
     super(repositoryAdviser)
   }
 
-  async getAdviserForState(account: string, state: string) {
-    return this.repositoryAdviser.getAdviserForState(account, state)
-  }
-
-  async getAdviserForAccount(account: string) {
-    return this.repositoryAdviser.getAdviserForAccount(account)
+  async getAdviserForAccount(account: string, state?: string) {
+    return this.repositoryAdviser.getAdviserForAccount(account, state)
   }
 
   async advicerSearchAvailable(client: Record<string, unknown>) {
-    if (!client.account) return 'account is required'
-    const res = await this.getAdviserForState(
+    if (!client.account) return new Error('Account is required')
+    const res = await this.getAdviserForAccount(
       client.account as string,
-      'AVAILABLE'
+      StatePersonalShopper.AVAILABLE
     )
 
     if (res.payload.total)
@@ -38,7 +35,7 @@ export class AdviserApplication extends BaseApplication<AdviserModel> {
     else {
       await this.eventRepository.sendMessage([
         {
-          Detail: JSON.stringify(res),
+          Detail: JSON.stringify(client),
           DetailType: EventPersonalShopper.EVENT_ADVISER_UNAVAILABLE,
         },
       ])

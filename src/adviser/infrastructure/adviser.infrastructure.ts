@@ -11,48 +11,33 @@ export class AdviserInfrastructure
   implements AdviserRepository
 {
   async getAdviserForAccount(
-    account: string
+    account: string,
+    state?: string
   ): Promise<Result<AdviserModel | Record<string, unknown>>> {
+    const addQueryState = {
+      FilterExpression: state ? ' and #state = :state' : '',
+      ExpressionAttributeNames: state ? { '#state': 'state' } : {},
+      ExpressionAttributeValues: state ? { ':state': state } : {},
+    }
+
     const res = await this.db
       .query({
         TableName: this.tableName,
         KeyConditionExpression: 'PK = :account and begins_with(SK,:sk)',
-        FilterExpression: 'active = :active',
+        FilterExpression: `#active = :active${addQueryState.FilterExpression}`,
         ExpressionAttributeValues: {
           ':account': `${ID.Account}#${account}`,
           ':sk': `${ID.Adviser}#`,
           ':active': true,
+          ...addQueryState.ExpressionAttributeValues,
+        },
+        ExpressionAttributeNames: {
+          '#active': 'active',
+          ...addQueryState.ExpressionAttributeNames,
         },
       })
       .promise()
 
     return ResponseDto('123', res.Items, res.Count)
-  }
-
-  async getAdviserForState(
-    account: string,
-    state: string
-  ): Promise<Result<AdviserModel | Record<string, unknown>>> {
-    const res = await this.db
-      .query({
-        TableName: this.tableName,
-        IndexName: 'stateIndex',
-        KeyConditionExpression: 'account = :account and stateRole = :stateRole',
-        FilterExpression: 'active = :active',
-        ExpressionAttributeValues: {
-          ':account': account,
-          ':stateRole': `${ID.Adviser}#${ID.State}#${state}`,
-          ':active': true,
-        },
-      })
-      .promise()
-
-    return ResponseDto('123', res.Items, res.Count)
-  }
-
-  async advicerSearchAvailable(account: string) {
-    const res = await this.getAdviserForState(account, 'AVAILABLE')
-
-    return res
   }
 }

@@ -10,7 +10,6 @@ export class AdviserSerializer extends BaseSerializer {
 
   toRemoveKey(): Record<string, unknown> {
     return {
-      stateRole: this.stateRole,
       GSI1PK: this.gsi1pk,
       GSI1SK: this.gsi1sk,
       rules: this.data.rules,
@@ -24,10 +23,6 @@ export class AdviserSerializer extends BaseSerializer {
       phone: this.data.phone,
       schedules: this.data.schedules,
     }
-  }
-
-  get stateRole(): string {
-    return `${ID.Adviser}#${ID.State}#${this.data.state}`
   }
 
   get gsi1pk(): string {

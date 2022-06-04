@@ -32,11 +32,7 @@ export default {
           AttributeType: 'S',
         },
         {
-          AttributeName: 'account',
-          AttributeType: 'S',
-        },
-        {
-          AttributeName: 'stateRole',
+          AttributeName: 'stateClient',
           AttributeType: 'S',
         },
       ],
@@ -62,14 +58,14 @@ export default {
           },
         },
         {
-          IndexName: 'stateIndex',
+          IndexName: 'stateClientIndex',
           KeySchema: [
             {
-              AttributeName: 'account',
+              AttributeName: 'GSI1PK',
               KeyType: 'HASH',
             },
             {
-              AttributeName: 'stateRole',
+              AttributeName: 'stateClient',
               KeyType: 'RANGE',
             },
           ],

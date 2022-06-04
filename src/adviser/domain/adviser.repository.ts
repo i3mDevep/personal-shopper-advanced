@@ -4,16 +4,8 @@ import type Result from '@shared/persistence/dynamodb/application/result.interfa
 import type { AdviserModel } from './adviser.model'
 
 export interface AdviserRepository extends BaseRepository<AdviserModel> {
-  getAdviserForState(
-    account: string,
-    state: string
-  ): Promise<Result<AdviserModel | Record<string, unknown>>>
-
   getAdviserForAccount(
-    account: string
-  ): Promise<Result<AdviserModel | Record<string, unknown>>>
-
-  advicerSearchAvailable(
-    account: string
+    account: string,
+    state?: string
   ): Promise<Result<AdviserModel | Record<string, unknown>>>
 }

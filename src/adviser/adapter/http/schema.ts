@@ -42,3 +42,15 @@ export const updateSchemaAdviser = {
     },
   },
 }
+
+export const getSchemaAdviser = {
+  type: 'object',
+  properties: {
+    queryStringParameters: {
+      type: 'object',
+      properties: {
+        state: { type: 'string' },
+      },
+    },
+  },
+}

@@ -20,18 +20,19 @@ export const clientGetForState = {
     {
       http: {
         method: 'get',
-        path: 'client/{account}/state/{state}',
+        path: 'client/{account}/{adviser}',
       },
     },
   ],
 }
+
 export const clientCreate = {
   handler: `${handlerPath(__dirname)}/route.handlerCreateClient`,
   events: [
     {
       http: {
         method: 'post',
-        path: 'client/',
+        path: 'client',
         request: {
           schemas: {
             'application/json': createSchemaClient,
