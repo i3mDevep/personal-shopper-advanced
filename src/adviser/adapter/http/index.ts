@@ -1,6 +1,10 @@
 import { handlerPath } from '@shared/helper/context.route'
 
-import { createSchemaAdviser, updateSchemaAdviser } from './schema'
+import {
+  createSchemaAdviser,
+  updateSchemaAdviser,
+  acceptedSchemaAdviser,
+} from './schema'
 
 export const adviserCreate = {
   handler: `${handlerPath(__dirname)}/route.handlerCreateAdviser`,
@@ -12,6 +16,23 @@ export const adviserCreate = {
         request: {
           schemas: {
             'application/json': createSchemaAdviser,
+          },
+        },
+      },
+    },
+  ],
+}
+
+export const adviserAcceptedClient = {
+  handler: `${handlerPath(__dirname)}/route.handlerAdviserAcceptedClient`,
+  events: [
+    {
+      http: {
+        method: 'post',
+        path: 'adviser/accept',
+        request: {
+          schemas: {
+            'application/json': acceptedSchemaAdviser,
           },
         },
       },

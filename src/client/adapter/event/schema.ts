@@ -3,3 +3,20 @@ export const ClientSchema = {
   SK: 'string',
   required: ['PK', 'SK'],
 }
+
+export const ClientAcceptedSchema = {
+  payload: {
+    data: {
+      PK: 'string',
+      SK: 'string',
+      account: 'string',
+      fullName: 'string',
+      client: 'string',
+      email: 'string',
+      JoinInfo: {
+        Title: 'string',
+        Meeting: 'object',
+      },
+    },
+  },
+}

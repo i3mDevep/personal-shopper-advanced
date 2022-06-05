@@ -2,16 +2,25 @@ import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway'
 import { middyfy } from '@shared/helper/middyfy.lambda'
 import { HttpResponse } from '@shared/http/http.response'
 import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
+import { chime, ddb } from '@libs/aws'
+import { PersistenceInfrastructure } from 'src/meeting/infrastructure/persistence.infrastructure'
 
 import { AdviserSerializer } from '../../domain/adviser.serializer'
 import { AdviserModel } from '../../domain/adviser.model'
 import { AdviserInfrastructure } from '../../infrastructure/adviser.infrastructure'
 import { AdviserApplication } from '../../application/adviser.application'
 import type { getSchemaAdviser } from './schema'
-import { updateSchemaAdviser, createSchemaAdviser } from './schema'
+import {
+  updateSchemaAdviser,
+  createSchemaAdviser,
+  acceptedSchemaAdviser,
+} from './schema'
 import { AdviserEventInfrastructure } from '../../infrastructure/adviser.event.infrastructure'
+import { MeetingApplication } from '../../../meeting/application/meeting.application'
+import { ChimeInfrastructure } from '../../../meeting/infrastructure/chime.infrastructure'
 
-const tableName = process.env.PERSONAL_SHOPPER_TABLE
+const tableNamePersonalShopper = process.env.PERSONAL_SHOPPER_TABLE
+const tableMeeting = process.env.MEETING_TABLE
 
 class AdviserHttpAdapter {
   constructor(private operation: AdviserApplication) {}
@@ -65,6 +74,20 @@ class AdviserHttpAdapter {
     return HttpResponse.response(res)
   }
 
+  handlerAdviserAcceptedClient: ValidatedEventAPIGatewayProxyEvent<
+    typeof acceptedSchemaAdviser
+  > = async (event) => {
+    const { account, adviser, client } = event.body
+
+    const res = await this.operation.adviserAcceptedClient(
+      account,
+      adviser,
+      client
+    )
+
+    return HttpResponse.response(res, (res as any)?.code)
+  }
+
   handlerUpdateAdviser: ValidatedEventAPIGatewayProxyEvent<
     typeof updateSchemaAdviser
   > = async (event) => {
@@ -94,11 +117,26 @@ class AdviserHttpAdapter {
   }
 }
 
-const adviserInfrastructure = new AdviserInfrastructure(tableName)
+const adviserInfrastructure = new AdviserInfrastructure(
+  tableNamePersonalShopper
+)
+
 const adviserEventInfrastructure = new AdviserEventInfrastructure()
+const meetingInfrastructure = new ChimeInfrastructure(chime)
+const persistenceMeetingInfrastructure = new PersistenceInfrastructure(
+  ddb,
+  tableMeeting
+)
+
+const meetingApplication = new MeetingApplication(
+  meetingInfrastructure,
+  persistenceMeetingInfrastructure
+)
+
 const adviserApplication = new AdviserApplication(
   adviserInfrastructure,
-  adviserEventInfrastructure
+  adviserEventInfrastructure,
+  meetingApplication
 )
 
 const adviserAdapter = new AdviserHttpAdapter(adviserApplication)
@@ -117,4 +155,9 @@ export const handlerAdviserForAccount = middyfy(
 export const handlerUpdateAdviser = middyfy(
   adviserAdapter.handlerUpdateAdviser,
   updateSchemaAdviser
+)
+
+export const handlerAdviserAcceptedClient = middyfy(
+  adviserAdapter.handlerAdviserAcceptedClient,
+  acceptedSchemaAdviser
 )

@@ -22,7 +22,7 @@ export const handler = async (event) => {
   //   'guest'
   // )
 
-  console.log('entre a test')
+  console.log('entre a test', JSON.stringify(event, undefined, 2))
 
   return {
     statusCode: 200,

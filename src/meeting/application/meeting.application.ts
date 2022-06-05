@@ -23,18 +23,18 @@ export class MeetingApplication {
   ) {
     let meetingInfo = await this.persistenceRepository.getMeeting(title)
 
-    if (meetingInfo)
+    if (meetingInfo?.Meeting?.MeetingId)
       meetingInfo = await this.chimeRepository
         .getMeeting(meetingInfo.Meeting.MeetingId)
         .catch((e) => e)
 
-    if (!meetingInfo && role === this.roleGuest)
+    if (!meetingInfo?.Meeting?.MeetingId && role === this.roleGuest)
       return {
         JoinInfo: {
           Error: `Meeting ${title} not found with role ${role}`,
         },
       }
-    if (!meetingInfo) {
+    if (!meetingInfo?.Meeting?.MeetingId) {
       meetingInfo = await this.chimeRepository.createMeeting()
     }
 

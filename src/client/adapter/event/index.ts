@@ -15,3 +15,18 @@ export const handleClientCanceledEvent = {
     },
   ],
 }
+
+export const handleClientAccepted = {
+  handler: `${handlerPath(__dirname)}/route.handleClientAccepted`,
+  events: [
+    {
+      eventBridge: {
+        eventBus: process.env.BUS_PERSONAL_SHOPPER,
+        pattern: {
+          source: ['custom.personal-shopper'],
+          'detail-type': [EventPersonalShopper.EVENT_ADVISER_ACCEPTED],
+        },
+      },
+    },
+  ],
+}

@@ -20,6 +20,7 @@ export class AdviserSerializer extends BaseSerializer {
       active: this.data.active,
       createdAt: this.data.createdAt,
       lastUpdate: this.data.lastUpdate,
+      lastJoin: this.data.lastJoin,
       phone: this.data.phone,
       schedules: this.data.schedules,
     }

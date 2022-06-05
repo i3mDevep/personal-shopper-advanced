@@ -7,7 +7,6 @@ export const searchAvailableAdviserSchema = {
       SK: { type: 'string' },
       id: { type: 'string' },
       state: { type: 'string' },
-      stateRole: { type: 'string' },
       account: { type: 'string' },
       fullName: { type: 'string' },
       rules: {

@@ -9,7 +9,10 @@ export const puto = {
         eventBus: process.env.BUS_PERSONAL_SHOPPER,
         pattern: {
           source: ['custom.personal-shopper'],
-          'detail-type': [EventPersonalShopper.EVENT_CLIENT_CREATED],
+          'detail-type': [
+            EventPersonalShopper.EVENT_CLIENT_CREATED,
+            EventPersonalShopper.EVENT_ADVISER_ACCEPTED,
+          ],
         },
       },
     },

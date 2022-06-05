@@ -4,13 +4,12 @@ export const createSchemaClient = {
     body: {
       type: 'object',
       properties: {
-        id: { type: 'string' },
         account: { type: 'string' },
         email: { type: 'string' },
         fullName: { type: 'string' },
         phone: { type: 'string' },
       },
-      required: ['id', 'account', 'email', 'fullName'],
+      required: ['account', 'email', 'fullName'],
     },
   },
 }

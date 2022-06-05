@@ -7,6 +7,7 @@ import {
   adviserForAccount,
   handlerGetAdviser,
   handlerUpdateAdviser,
+  adviserAcceptedClient,
 } from './src/adviser/adapter/http'
 import { searchAvailableEvent } from './src/adviser/adapter/event'
 import {
@@ -20,7 +21,10 @@ import {
   clientUpdate,
   clientGetForState,
 } from './src/client/adapter/http'
-import { handleClientCanceledEvent } from './src/client/adapter/event'
+import {
+  handleClientCanceledEvent,
+  handleClientAccepted,
+} from './src/client/adapter/event'
 import { puto } from './src/test'
 
 const serverlessConfiguration: AWS = {
@@ -100,12 +104,14 @@ const serverlessConfiguration: AWS = {
     adviserForAccount,
     handlerGetAdviser,
     handlerUpdateAdviser,
+    adviserAcceptedClient,
     searchAvailableEvent,
     clientGet,
     clientGetForState,
     clientCreate,
     clientUpdate,
     handleClientCanceledEvent,
+    handleClientAccepted,
     puto,
   },
   resources: {

@@ -1,4 +1,5 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway'
+import { v4 as uuid } from 'uuid'
 import { middyfy } from '@shared/helper/middyfy.lambda'
 import { ClientSerializer } from 'src/client/domain/client.serializer'
 import { HttpResponse } from '@shared/http/http.response'
@@ -40,10 +41,10 @@ class ClientHttpAdapter {
   handlerCreateClient: ValidatedEventAPIGatewayProxyEvent<
     typeof createSchemaClient
   > = async (event) => {
-    const { id, account, email, fullName, phone } = event.body
+    const { account, email, fullName, phone } = event.body
 
     const clientModel = new ClientModel(
-      id,
+      uuid(),
       account,
       StatePersonalShopper.REQUESTING,
       AdviserUnAssigned,

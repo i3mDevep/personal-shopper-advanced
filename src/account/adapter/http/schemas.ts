@@ -33,7 +33,6 @@ export const updateSchemaAccount = {
         templateNotifyClient: { type: 'string' },
         active: { type: 'boolean' },
       },
-      required: ['account'],
     },
   },
 }

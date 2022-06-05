@@ -54,3 +54,18 @@ export const getSchemaAdviser = {
     },
   },
 }
+
+export const acceptedSchemaAdviser = {
+  type: 'object',
+  properties: {
+    body: {
+      type: 'object',
+      properties: {
+        account: { type: 'string' },
+        client: { type: 'string' },
+        adviser: { type: 'string' },
+      },
+      required: ['account', 'adviser', 'client'],
+    },
+  },
+}

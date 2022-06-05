@@ -15,9 +15,6 @@ export class ClientInfrastructure
     adviser: string,
     state: string
   ): Promise<Result<ClientModel | Record<string, unknown>>> {
-    console.log(`${ID.Account}#${account}#${ID.Adviser}#${adviser}`)
-    console.log(`${ID.StateClient}#${state}`)
-
     const res = await this.db
       .query({
         TableName: this.tableName,

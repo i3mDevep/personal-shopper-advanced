@@ -7,6 +7,7 @@ export class AdviserModel {
     public active?: boolean,
     public createdAt?: number,
     public lastUpdate?: number,
+    public lastJoin?: number,
     public phone?: string,
     public rules?: Array<{
       type: string

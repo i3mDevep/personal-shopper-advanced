@@ -1,12 +1,15 @@
 import type { EventBridgeHandler } from 'aws-lambda'
+import { identityDatabase as ID } from 'src/shared/helper/identity.database'
 import { HttpResponse as Response } from '@shared/http/http.response'
 import { middyfy } from '@shared/helper/middyfy.lambda'
 import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 
+import { ClientSerializer } from '../../domain/client.serializer'
+import { ClientModel } from '../../domain/client.model'
 import { ClientInfrastructure } from '../../infrastructure/client.store.infrastructure'
 import { ClientApplication } from '../../application/client.application'
 import { ClientEventInfrastructure } from '../../infrastructure/client.event.infrastructure'
-import type { ClientSchema } from './schema'
+import type { ClientAcceptedSchema, ClientSchema } from './schema'
 
 const tableName = process.env.PERSONAL_SHOPPER_TABLE
 
@@ -29,6 +32,39 @@ class ClientEventAdapter {
       input: event,
     })
   }
+
+  handleClientAccepted: EventBridgeHandler<
+    string,
+    typeof ClientAcceptedSchema,
+    unknown
+  > = async (event) => {
+    const {
+      payload: {
+        data: { account, client, email },
+      },
+    } = event.detail
+
+    const clientModel = new ClientModel(
+      client,
+      account,
+      StatePersonalShopper.ACCEPTED,
+      email
+    )
+
+    const accontSerializer = new ClientSerializer(clientModel)
+
+    const pk = `${ID.Client}#${client}`
+
+    await this.operation.updateItem(
+      { PK: pk, SK: pk },
+      accontSerializer.toRemoveKey()
+    )
+
+    return Response.response({
+      message: 'Event Bridge Lambda OK ClientAcceptedEventAdapter',
+      input: event,
+    })
+  }
 }
 
 const clientInfrastructure = new ClientInfrastructure(tableName)
@@ -41,3 +77,4 @@ const clientApplication = new ClientApplication(
 const clientAdapter = new ClientEventAdapter(clientApplication)
 
 export const handleClientCanceled = middyfy(clientAdapter.handleClientCanceled)
+export const handleClientAccepted = middyfy(clientAdapter.handleClientAccepted)
