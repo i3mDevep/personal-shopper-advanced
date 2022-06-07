@@ -1,3 +1,6 @@
+import type { JoinInfoResponseType } from '@shared/types/chime'
+import createError from 'http-errors'
+
 import type { ChimeRepository } from '../domain/chime.repository'
 import type { PersistenceRepository } from '../domain/persistence.repository'
 
@@ -20,7 +23,7 @@ export class MeetingApplication {
     title: string,
     name: string,
     role: typeof this.roleModerator | typeof this.roleGuest
-  ) {
+  ): Promise<JoinInfoResponseType> {
     let meetingInfo = await this.persistenceRepository.getMeeting(title)
 
     if (meetingInfo?.Meeting?.MeetingId)
@@ -29,11 +32,8 @@ export class MeetingApplication {
         .catch((e) => e)
 
     if (!meetingInfo?.Meeting?.MeetingId && role === this.roleGuest)
-      return {
-        JoinInfo: {
-          Error: `Meeting ${title} not found with role ${role}`,
-        },
-      }
+      throw createError(409, `Meeting ${title} not found with role ${role}`)
+
     if (!meetingInfo?.Meeting?.MeetingId) {
       meetingInfo = await this.chimeRepository.createMeeting()
     }

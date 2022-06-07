@@ -10,6 +10,27 @@ export class AdviserInfrastructure
   extends DynamoDBService<AdviserModel>
   implements AdviserRepository
 {
+  async getAdviserValidateClient(
+    key: Record<string, string>,
+    client: string
+  ): Promise<Result<AdviserModel | Record<string, unknown>>> {
+    const adviser = await this.getItem(key)
+
+    const client_ = await this.db
+      .get({
+        TableName: this.tableName,
+        Key: {
+          PK: `${ID.Client}#${client}`,
+          SK: `${ID.Client}#${client}`,
+        },
+      })
+      .promise()
+
+    if (!client_.Item) return undefined
+
+    return adviser
+  }
+
   async getAdviserForAccount(
     account: string,
     state?: string

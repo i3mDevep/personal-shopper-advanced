@@ -1,7 +1,9 @@
+import createError from 'http-errors'
 import type { BridgeRepository } from '@shared/event-bridge/domain/event.repository'
 import { EventPersonalShopper } from '@shared/event-bridge/helper/event.personal-shopper'
 import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 import BaseApplication from '@shared/persistence/dynamodb/application/dynamodb.application'
+import { ResponseDto } from '@shared/persistence/dynamodb/application/response.dto'
 
 import { AdviserModel } from '../domain/adviser.model'
 import { AdviserSerializer } from '../domain/adviser.serializer'
@@ -30,13 +32,18 @@ export class AdviserApplication extends BaseApplication<AdviserModel> {
       new AdviserModel(account, adviser)
     )
 
-    const adviserData = await this.getItem(adviserSerializer.keys())
-
-    if (
-      (adviserData.payload.data as AdviserModel).state !==
-      StatePersonalShopper.AVAILABLE
+    const adviserData = await this.repositoryAdviser.getAdviserValidateClient(
+      adviserSerializer.keys(),
+      client
     )
-      return { error: 'Adviser is not available', code: 400 }
+
+    if (!adviserData) throw createError(409, 'Client is not exist')
+    if (
+      !adviserData.payload.data ||
+      (adviserData.payload.data as AdviserModel)?.state !==
+        StatePersonalShopper.AVAILABLE
+    )
+      throw createError(409, 'Adviser is not available or not found')
 
     const joinInfo = await this.meetingApplication.joinMeeting(
       client,
@@ -49,30 +56,24 @@ export class AdviserApplication extends BaseApplication<AdviserModel> {
       lastJoin: new Date().getTime(),
     })
 
-    const response = {
-      ...adviserData,
-      payload: {
-        ...adviserData.payload,
-        data: {
-          ...adviserData.payload.data,
-          client,
-          JoinInfo: joinInfo.JoinInfo,
-        },
-      },
-    }
+    const dataResponse = ResponseDto('123', {
+      ...adviserData.payload.data,
+      client,
+      JoinInfo: joinInfo.JoinInfo,
+    })
 
     await this.eventRepository.sendMessage([
       {
-        Detail: JSON.stringify(response),
+        Detail: JSON.stringify(dataResponse),
         DetailType: EventPersonalShopper.EVENT_ADVISER_ACCEPTED,
       },
     ])
 
-    return response
+    return dataResponse
   }
 
   async advicerSearchAvailable(client: Record<string, unknown>) {
-    if (!client.account) return new Error('Account is required')
+    if (!client.account) throw createError(409, 'Account is required')
     const res = await this.getAdviserForAccount(
       client.account as string,
       StatePersonalShopper.AVAILABLE

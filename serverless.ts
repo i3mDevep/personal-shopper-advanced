@@ -20,6 +20,7 @@ import {
   clientGet,
   clientUpdate,
   clientGetForState,
+  clientJoin,
 } from './src/client/adapter/http'
 import {
   handleClientCanceledEvent,
@@ -110,6 +111,7 @@ const serverlessConfiguration: AWS = {
     clientGetForState,
     clientCreate,
     clientUpdate,
+    clientJoin,
     handleClientCanceledEvent,
     handleClientAccepted,
     puto,

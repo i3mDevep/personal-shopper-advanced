@@ -85,7 +85,7 @@ class AdviserHttpAdapter {
       client
     )
 
-    return HttpResponse.response(res, (res as any)?.code)
+    return HttpResponse.response(res)
   }
 
   handlerUpdateAdviser: ValidatedEventAPIGatewayProxyEvent<

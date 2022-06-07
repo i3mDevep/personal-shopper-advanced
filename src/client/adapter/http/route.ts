@@ -5,6 +5,10 @@ import { ClientSerializer } from 'src/client/domain/client.serializer'
 import { HttpResponse } from '@shared/http/http.response'
 import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 import { AdviserUnAssigned } from '@shared/helper/identity.database'
+import { ChimeInfrastructure } from 'src/meeting/infrastructure/chime.infrastructure'
+import { MeetingApplication } from 'src/meeting/application/meeting.application'
+import { chime, ddb } from '@libs/aws'
+import { PersistenceInfrastructure } from 'src/meeting/infrastructure/persistence.infrastructure'
 
 import { ClientEventInfrastructure } from '../../infrastructure/client.event.infrastructure'
 import { ClientModel } from '../../domain/client.model'
@@ -13,6 +17,7 @@ import { ClientApplication } from '../../application/client.application'
 import { createSchemaClient, updateSchemaClient } from './schema'
 
 const tableName = process.env.PERSONAL_SHOPPER_TABLE
+const tableMeeting = process.env.MEETING_TABLE
 
 class ClientHttpAdapter {
   constructor(private operation: ClientApplication) {}
@@ -25,6 +30,13 @@ class ClientHttpAdapter {
 
       return HttpResponse.response(res)
     }
+
+  joinClient: ValidatedEventAPIGatewayProxyEvent<unknown> = async (event) => {
+    const { client } = event.pathParameters
+    const res = await this.operation.joinClient(client)
+
+    return HttpResponse.response(res)
+  }
 
   handlerGetClient: ValidatedEventAPIGatewayProxyEvent<unknown> = async (
     event
@@ -89,10 +101,21 @@ class ClientHttpAdapter {
 
 const clientStoreInfrastructure = new ClientInfrastructure(tableName)
 const clientEventInfrastructure = new ClientEventInfrastructure()
+const meetingInfrastructure = new ChimeInfrastructure(chime)
+const persistenceMeetingInfrastructure = new PersistenceInfrastructure(
+  ddb,
+  tableMeeting
+)
+
+const meetingApplication = new MeetingApplication(
+  meetingInfrastructure,
+  persistenceMeetingInfrastructure
+)
 
 const clientApplication = new ClientApplication(
   clientStoreInfrastructure,
-  clientEventInfrastructure
+  clientEventInfrastructure,
+  meetingApplication
 )
 
 const clientAdapter = new ClientHttpAdapter(clientApplication)
@@ -110,3 +133,5 @@ export const handlerCreateClient = middyfy(
   clientAdapter.handlerCreateClient,
   createSchemaClient
 )
+
+export const handlerJoinClient = middyfy(clientAdapter.joinClient)

@@ -20,11 +20,18 @@ class ClientEventAdapter {
     typeof ClientSchema,
     unknown
   > = async (event) => {
-    const { PK, SK } = event.detail
+    const { id, PK, SK } = event.detail
+    const clientModel = new ClientModel(
+      id,
+      undefined,
+      StatePersonalShopper.CANCELED_UNAVAILABLE_ADVISER
+    )
+
+    const accontSerializer = new ClientSerializer(clientModel)
 
     await this.operation.updateItem(
       { PK, SK },
-      { state: StatePersonalShopper.CANCELED_UNAVAILABLE_ADVISER }
+      { ...accontSerializer.toRemoveKey() }
     )
 
     return Response.response({

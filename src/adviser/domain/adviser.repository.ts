@@ -8,4 +8,8 @@ export interface AdviserRepository extends BaseRepository<AdviserModel> {
     account: string,
     state?: string
   ): Promise<Result<AdviserModel | Record<string, unknown>>>
+  getAdviserValidateClient: (
+    key: Record<string, string>,
+    client: string
+  ) => Promise<Result<AdviserModel | Record<string, unknown>>>
 }

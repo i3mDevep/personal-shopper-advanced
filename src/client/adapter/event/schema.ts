@@ -1,7 +1,8 @@
 export const ClientSchema = {
   PK: 'string',
   SK: 'string',
-  required: ['PK', 'SK'],
+  id: 'string',
+  required: ['PK', 'SK', 'id'],
 }
 
 export const ClientAcceptedSchema = {

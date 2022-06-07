@@ -14,6 +14,17 @@ export const clientGet = {
   ],
 }
 
+export const clientJoin = {
+  handler: `${handlerPath(__dirname)}/route.handlerJoinClient`,
+  events: [
+    {
+      http: {
+        method: 'post',
+        path: 'client/{client}/join',
+      },
+    },
+  ],
+}
 export const clientGetForState = {
   handler: `${handlerPath(__dirname)}/route.handlerGetClientForState`,
   events: [
