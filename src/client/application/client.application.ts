@@ -6,6 +6,7 @@ import type Result from '@shared/persistence/dynamodb/application/result.interfa
 import { identityDatabase as ID } from '@shared/helper/identity.database'
 import type { JoinInfoResponseType } from '@shared/types/chime'
 import { ResponseDto } from '@shared/persistence/dynamodb/application/response.dto'
+import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 
 import type { MeetingApplication } from '../../meeting/application/meeting.application'
 import type { ClientModel } from '../domain/client.model'
@@ -38,9 +39,20 @@ export class ClientApplication extends BaseApplication<ClientModel> {
 
     if (!client.payload.data) throw createError(409, 'Client is not exist')
 
+    const clientUpdate = await this.storeRepository.updateItem(
+      {
+        PK: `${ID.Client}#${id}`,
+        SK: `${ID.Client}#${id}`,
+      },
+      {
+        state: StatePersonalShopper.IN_MEETING,
+      }
+    )
+
     const joinInfo = await this.meetingApplication.joinMeeting(
       id,
-      (client.payload.data as ClientModel).fullName,
+      ({ ...client.payload.data, ...clientUpdate.payload.data } as ClientModel)
+        .fullName,
       'guest'
     )
 

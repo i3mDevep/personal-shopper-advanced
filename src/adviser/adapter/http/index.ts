@@ -40,6 +40,23 @@ export const adviserAcceptedClient = {
   ],
 }
 
+export const adviserJoin = {
+  handler: `${handlerPath(__dirname)}/route.handlerJoinAdviser`,
+  events: [
+    {
+      http: {
+        method: 'post',
+        path: 'adviser/join',
+        request: {
+          schemas: {
+            'application/json': acceptedSchemaAdviser,
+          },
+        },
+      },
+    },
+  ],
+}
+
 export const adviserForAccount = {
   handler: `${handlerPath(__dirname)}/route.handlerAdviserForAccount`,
   events: [

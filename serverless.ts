@@ -8,6 +8,7 @@ import {
   handlerGetAdviser,
   handlerUpdateAdviser,
   adviserAcceptedClient,
+  adviserJoin,
 } from './src/adviser/adapter/http'
 import { searchAvailableEvent } from './src/adviser/adapter/event'
 import {
@@ -106,6 +107,7 @@ const serverlessConfiguration: AWS = {
     handlerGetAdviser,
     handlerUpdateAdviser,
     adviserAcceptedClient,
+    adviserJoin,
     searchAvailableEvent,
     clientGet,
     clientGetForState,

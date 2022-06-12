@@ -88,6 +88,16 @@ class AdviserHttpAdapter {
     return HttpResponse.response(res)
   }
 
+  handlerJoinAdviser: ValidatedEventAPIGatewayProxyEvent<
+    typeof acceptedSchemaAdviser
+  > = async (event) => {
+    const { account, adviser, client } = event.body
+
+    const res = await this.operation.joinAdviser(account, adviser, client)
+
+    return HttpResponse.response(res)
+  }
+
   handlerUpdateAdviser: ValidatedEventAPIGatewayProxyEvent<
     typeof updateSchemaAdviser
   > = async (event) => {
@@ -159,5 +169,10 @@ export const handlerUpdateAdviser = middyfy(
 
 export const handlerAdviserAcceptedClient = middyfy(
   adviserAdapter.handlerAdviserAcceptedClient,
+  acceptedSchemaAdviser
+)
+
+export const handlerJoinAdviser = middyfy(
+  adviserAdapter.handlerJoinAdviser,
   acceptedSchemaAdviser
 )
