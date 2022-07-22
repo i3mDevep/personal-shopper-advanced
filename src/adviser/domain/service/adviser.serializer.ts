@@ -1,7 +1,7 @@
 import { identityDatabase as ID } from 'src/shared/helper/identity.database'
 import { BaseSerializer } from '@shared/persistence/dynamodb/domain/dynamodb.serializer'
 
-import type { AdviserModel } from './adviser.model'
+import type { AdviserModel } from '../model/adviser.model'
 
 export class AdviserSerializer extends BaseSerializer {
   constructor(private data?: AdviserModel) {

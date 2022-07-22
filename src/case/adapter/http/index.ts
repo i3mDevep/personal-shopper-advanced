@@ -2,48 +2,48 @@ import { handlerPath } from '@shared/helper/context.route'
 
 import { createSchemaClient, updateSchemaClient } from './schema'
 
-export const clientGet = {
+export const caseGet = {
   handler: `${handlerPath(__dirname)}/route.handlerGetClient`,
   events: [
     {
       http: {
         method: 'get',
-        path: 'client/{client}',
+        path: 'case/{case}',
       },
     },
   ],
 }
 
-export const clientJoin = {
+export const caseJoin = {
   handler: `${handlerPath(__dirname)}/route.handlerJoinClient`,
   events: [
     {
       http: {
         method: 'post',
-        path: 'client/{client}/join',
+        path: 'case/{case}/join',
       },
     },
   ],
 }
-export const clientGetForState = {
+export const caseGetForState = {
   handler: `${handlerPath(__dirname)}/route.handlerGetClientForState`,
   events: [
     {
       http: {
         method: 'get',
-        path: 'client/{account}/{adviser}',
+        path: 'case/{account}/{adviser}',
       },
     },
   ],
 }
 
-export const clientCreate = {
+export const caseCreate = {
   handler: `${handlerPath(__dirname)}/route.handlerCreateClient`,
   events: [
     {
       http: {
         method: 'post',
-        path: 'client',
+        path: 'case',
         request: {
           schemas: {
             'application/json': createSchemaClient,
@@ -54,13 +54,13 @@ export const clientCreate = {
   ],
 }
 
-export const clientUpdate = {
+export const caseUpdate = {
   handler: `${handlerPath(__dirname)}/route.handlerUpdateClient`,
   events: [
     {
       http: {
         method: 'put',
-        path: 'client/{client}',
+        path: 'case/{case}',
         request: {
           schemas: {
             'application/json': updateSchemaClient,

@@ -5,8 +5,8 @@ import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 import { chime, ddb } from '@libs/aws'
 import { PersistenceInfrastructure } from 'src/meeting/infrastructure/persistence.infrastructure'
 
-import { AdviserSerializer } from '../../domain/adviser.serializer'
-import { AdviserModel } from '../../domain/adviser.model'
+import { AdviserSerializer } from '../../domain/service/adviser.serializer'
+import { AdviserModel } from '../../domain/model/adviser.model'
 import { AdviserInfrastructure } from '../../infrastructure/adviser.infrastructure'
 import { AdviserApplication } from '../../application/adviser.application'
 import type { getSchemaAdviser } from './schema'
@@ -77,12 +77,12 @@ class AdviserHttpAdapter {
   handlerAdviserAcceptedClient: ValidatedEventAPIGatewayProxyEvent<
     typeof acceptedSchemaAdviser
   > = async (event) => {
-    const { account, adviser, client } = event.body
+    const { account, adviser, case: case_ } = event.body
 
     const res = await this.operation.adviserAcceptedClient(
       account,
       adviser,
-      client
+      case_
     )
 
     return HttpResponse.response(res)
@@ -91,9 +91,9 @@ class AdviserHttpAdapter {
   handlerJoinAdviser: ValidatedEventAPIGatewayProxyEvent<
     typeof acceptedSchemaAdviser
   > = async (event) => {
-    const { account, adviser, client } = event.body
+    const { account, adviser, case: case_ } = event.body
 
-    const res = await this.operation.joinAdviser(account, adviser, client)
+    const res = await this.operation.joinAdviser(account, adviser, case_)
 
     return HttpResponse.response(res)
   }

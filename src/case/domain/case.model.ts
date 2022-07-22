@@ -1,4 +1,4 @@
-export class ClientModel {
+export class CaseModel {
   constructor(
     public id: string,
     public account?: string,

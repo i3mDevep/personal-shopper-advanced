@@ -1,7 +1,7 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway'
 import { v4 as uuid } from 'uuid'
 import { middyfy } from '@shared/helper/middyfy.lambda'
-import { ClientSerializer } from 'src/client/domain/client.serializer'
+import { ClientSerializer } from 'src/case/domain/case.serializer'
 import { HttpResponse } from '@shared/http/http.response'
 import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 import { AdviserUnAssigned } from '@shared/helper/identity.database'
@@ -10,17 +10,17 @@ import { MeetingApplication } from 'src/meeting/application/meeting.application'
 import { chime, ddb } from '@libs/aws'
 import { PersistenceInfrastructure } from 'src/meeting/infrastructure/persistence.infrastructure'
 
-import { ClientEventInfrastructure } from '../../infrastructure/client.event.infrastructure'
-import { ClientModel } from '../../domain/client.model'
-import { ClientInfrastructure } from '../../infrastructure/client.store.infrastructure'
-import { ClientApplication } from '../../application/client.application'
+import { CaseEventInfrastructure } from '../../infrastructure/case.event.infrastructure'
+import { CaseModel } from '../../domain/case.model'
+import { CaseInfrastructure } from '../../infrastructure/case.store.infrastructure'
+import { CaseApplication } from '../../application/case.application'
 import { createSchemaClient, updateSchemaClient } from './schema'
 
 const tableName = process.env.PERSONAL_SHOPPER_TABLE
 const tableMeeting = process.env.MEETING_TABLE
 
 class ClientHttpAdapter {
-  constructor(private operation: ClientApplication) {}
+  constructor(private operation: CaseApplication) {}
 
   handlerGetClientForState: ValidatedEventAPIGatewayProxyEvent<unknown> =
     async (event) => {
@@ -32,8 +32,8 @@ class ClientHttpAdapter {
     }
 
   joinClient: ValidatedEventAPIGatewayProxyEvent<unknown> = async (event) => {
-    const { client } = event.pathParameters
-    const res = await this.operation.joinClient(client)
+    const { case: case_ } = event.pathParameters
+    const res = await this.operation.joinClient(case_)
 
     return HttpResponse.response(res)
   }
@@ -41,8 +41,8 @@ class ClientHttpAdapter {
   handlerGetClient: ValidatedEventAPIGatewayProxyEvent<unknown> = async (
     event
   ) => {
-    const { client } = event.pathParameters
-    const clientModel = new ClientModel(client)
+    const { case: case_ } = event.pathParameters
+    const clientModel = new CaseModel(case_)
     const accontSerializer = new ClientSerializer(clientModel)
 
     const res = await this.operation.getItem({ ...accontSerializer.keys() })
@@ -55,7 +55,7 @@ class ClientHttpAdapter {
   > = async (event) => {
     const { account, email, fullName, phone } = event.body
 
-    const clientModel = new ClientModel(
+    const clientModel = new CaseModel(
       uuid(),
       account,
       StatePersonalShopper.REQUESTING,
@@ -76,11 +76,11 @@ class ClientHttpAdapter {
   handlerUpdateClient: ValidatedEventAPIGatewayProxyEvent<
     typeof updateSchemaClient
   > = async (event) => {
-    const { client } = event.pathParameters
+    const { case: case_ } = event.pathParameters
     const { account, email, fullName, phone, advisor, state } = event.body
 
-    const clientModel = new ClientModel(
-      client,
+    const clientModel = new CaseModel(
+      case_,
       account,
       state,
       advisor,
@@ -99,8 +99,8 @@ class ClientHttpAdapter {
   }
 }
 
-const clientStoreInfrastructure = new ClientInfrastructure(tableName)
-const clientEventInfrastructure = new ClientEventInfrastructure()
+const clientStoreInfrastructure = new CaseInfrastructure(tableName)
+const clientEventInfrastructure = new CaseEventInfrastructure()
 const meetingInfrastructure = new ChimeInfrastructure(chime)
 const persistenceMeetingInfrastructure = new PersistenceInfrastructure(
   ddb,
@@ -112,7 +112,7 @@ const meetingApplication = new MeetingApplication(
   persistenceMeetingInfrastructure
 )
 
-const clientApplication = new ClientApplication(
+const clientApplication = new CaseApplication(
   clientStoreInfrastructure,
   clientEventInfrastructure,
   meetingApplication

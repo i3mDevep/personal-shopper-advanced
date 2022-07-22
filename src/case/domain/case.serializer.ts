@@ -1,10 +1,10 @@
 import { identityDatabase as ID } from 'src/shared/helper/identity.database'
 import { BaseSerializer } from '@shared/persistence/dynamodb/domain/dynamodb.serializer'
 
-import type { ClientModel } from './client.model'
+import type { CaseModel } from './case.model'
 
 export class ClientSerializer extends BaseSerializer {
-  constructor(private data?: ClientModel) {
+  constructor(private data?: CaseModel) {
     super()
   }
 
@@ -40,7 +40,7 @@ export class ClientSerializer extends BaseSerializer {
   get stateClientSk(): string | undefined {
     if (!this.data.state) return undefined
 
-    return `${ID.StateClient}#${this.data.state}`
+    return `${ID.StateCase}#${this.data.state}`
   }
 
   get gsi1pk(): string | undefined {
@@ -52,14 +52,14 @@ export class ClientSerializer extends BaseSerializer {
   get gsi1sk(): string | undefined {
     if (!this.data.advisor) return undefined
 
-    return `${ID.Client}#${this.data.id}`
+    return `${ID.Case}#${this.data.id}`
   }
 
   get pk(): string {
-    return `${ID.Client}#${this.data.id}`
+    return `${ID.Case}#${this.data.id}`
   }
 
   get sk(): string {
-    return `${ID.Client}#${this.data.id}`
+    return `${ID.Case}#${this.data.id}`
   }
 }

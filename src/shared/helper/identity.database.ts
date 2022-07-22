@@ -1,9 +1,9 @@
 export const identityDatabase = {
   Account: 'ACC',
   Adviser: 'ADV',
-  Client: 'CLI',
+  Case: 'CAS',
   State: 'STA',
-  StateClient: 'STA_CLI',
+  StateCase: 'STA_CAS',
 }
 
 export const AdviserUnAssigned = 'ADVISER_UNASSIGNED'

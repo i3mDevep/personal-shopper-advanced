@@ -9,10 +9,10 @@ import { ResponseDto } from '@shared/persistence/dynamodb/application/response.d
 import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 
 import type { MeetingApplication } from '../../meeting/application/meeting.application'
-import type { ClientModel } from '../domain/client.model'
-import type { StoreRepository } from '../domain/client.store.repository'
+import type { CaseModel } from '../domain/case.model'
+import type { StoreRepository } from '../domain/case.store.repository'
 
-export class ClientApplication extends BaseApplication<ClientModel> {
+export class CaseApplication extends BaseApplication<CaseModel> {
   constructor(
     private storeRepository: StoreRepository,
     private eventRepository: BridgeRepository,
@@ -25,24 +25,24 @@ export class ClientApplication extends BaseApplication<ClientModel> {
     account: string,
     adviser: string,
     state: string
-  ): Promise<Result<ClientModel | Record<string, unknown>>> {
+  ): Promise<Result<CaseModel | Record<string, unknown>>> {
     return this.storeRepository.getClienForState(account, adviser, state)
   }
 
   async joinClient(
     id: string
-  ): Promise<Result<ClientModel & JoinInfoResponseType>> {
+  ): Promise<Result<CaseModel & JoinInfoResponseType>> {
     const client = await this.storeRepository.getItem({
-      PK: `${ID.Client}#${id}`,
-      SK: `${ID.Client}#${id}`,
+      PK: `${ID.Case}#${id}`,
+      SK: `${ID.Case}#${id}`,
     })
 
-    if (!client.payload.data) throw createError(409, 'Client is not exist')
+    if (!client.payload.data) throw createError(409, 'Case is not exist')
 
     const clientUpdate = await this.storeRepository.updateItem(
       {
-        PK: `${ID.Client}#${id}`,
-        SK: `${ID.Client}#${id}`,
+        PK: `${ID.Case}#${id}`,
+        SK: `${ID.Case}#${id}`,
       },
       {
         state: StatePersonalShopper.IN_MEETING,
@@ -51,7 +51,7 @@ export class ClientApplication extends BaseApplication<ClientModel> {
 
     const joinInfo = await this.meetingApplication.joinMeeting(
       id,
-      ({ ...client.payload.data, ...clientUpdate.payload.data } as ClientModel)
+      ({ ...client.payload.data, ...clientUpdate.payload.data } as CaseModel)
         .fullName,
       'guest'
     )
@@ -60,7 +60,7 @@ export class ClientApplication extends BaseApplication<ClientModel> {
   }
 
   override create = async (
-    data: ClientModel | Record<string, unknown>,
+    data: CaseModel | Record<string, unknown>,
     search?: Record<string, unknown>
   ) => {
     const res = await this.storeRepository.create(data)

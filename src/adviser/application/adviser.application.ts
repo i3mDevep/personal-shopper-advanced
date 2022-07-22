@@ -5,9 +5,9 @@ import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 import BaseApplication from '@shared/persistence/dynamodb/application/dynamodb.application'
 import { ResponseDto } from '@shared/persistence/dynamodb/application/response.dto'
 
-import { AdviserModel } from '../domain/adviser.model'
-import { AdviserSerializer } from '../domain/adviser.serializer'
-import type { AdviserRepository } from '../domain/adviser.repository'
+import { AdviserModel } from '../domain/model/adviser.model'
+import { AdviserSerializer } from '../domain/service/adviser.serializer'
+import type { AdviserRepository } from '../domain/repository/adviser.repository'
 import type { MeetingApplication } from '../../meeting/application/meeting.application'
 
 export class AdviserApplication extends BaseApplication<AdviserModel> {
@@ -77,7 +77,7 @@ export class AdviserApplication extends BaseApplication<AdviserModel> {
       client
     )
 
-    if (!adviserData) throw createError(409, 'Client is not exist')
+    if (!adviserData) throw createError(409, 'Case is not exist')
 
     if (
       !adviserData.payload.data ||

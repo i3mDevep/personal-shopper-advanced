@@ -62,10 +62,10 @@ export const acceptedSchemaAdviser = {
       type: 'object',
       properties: {
         account: { type: 'string' },
-        client: { type: 'string' },
+        case: { type: 'string' },
         adviser: { type: 'string' },
       },
-      required: ['account', 'adviser', 'client'],
+      required: ['account', 'adviser', 'case'],
     },
   },
 }

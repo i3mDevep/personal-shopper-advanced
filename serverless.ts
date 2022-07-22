@@ -17,16 +17,16 @@ import {
   accountCreate,
 } from './src/account/adapter/http'
 import {
-  clientCreate,
-  clientGet,
-  clientUpdate,
-  clientGetForState,
-  clientJoin,
-} from './src/client/adapter/http'
+  caseCreate,
+  caseGet,
+  caseUpdate,
+  caseGetForState,
+  caseJoin,
+} from './src/case/adapter/http'
 import {
   handleClientCanceledEvent,
   handleClientAccepted,
-} from './src/client/adapter/event'
+} from './src/case/adapter/event'
 import { puto } from './src/test'
 
 const serverlessConfiguration: AWS = {
@@ -109,11 +109,11 @@ const serverlessConfiguration: AWS = {
     adviserAcceptedClient,
     adviserJoin,
     searchAvailableEvent,
-    clientGet,
-    clientGetForState,
-    clientCreate,
-    clientUpdate,
-    clientJoin,
+    caseCreate,
+    caseGet,
+    caseUpdate,
+    caseGetForState,
+    caseJoin,
     handleClientCanceledEvent,
     handleClientAccepted,
     puto,

@@ -3,7 +3,7 @@ import type { BridgeRepository } from '@shared/event-bridge/domain/event.reposit
 
 const { BUS_PERSONAL_SHOPPER } = process.env
 
-export class ClientEventInfrastructure
+export class CaseEventInfrastructure
   extends BridgeInfrastructure
   implements BridgeRepository
 {

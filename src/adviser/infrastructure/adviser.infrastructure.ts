@@ -3,8 +3,8 @@ import type Result from '@shared/persistence/dynamodb/application/result.interfa
 import DynamoDBService from '@shared/persistence/dynamodb/infrastructure/dynamodb.infrastructure'
 import { identityDatabase as ID } from 'src/shared/helper/identity.database'
 
-import type { AdviserModel } from '../domain/adviser.model'
-import type { AdviserRepository } from '../domain/adviser.repository'
+import type { AdviserModel } from '../domain/model/adviser.model'
+import type { AdviserRepository } from '../domain/repository/adviser.repository'
 
 export class AdviserInfrastructure
   extends DynamoDBService<AdviserModel>
@@ -20,8 +20,8 @@ export class AdviserInfrastructure
       .get({
         TableName: this.tableName,
         Key: {
-          PK: `${ID.Client}#${client}`,
-          SK: `${ID.Client}#${client}`,
+          PK: `${ID.Case}#${client}`,
+          SK: `${ID.Case}#${client}`,
         },
       })
       .promise()

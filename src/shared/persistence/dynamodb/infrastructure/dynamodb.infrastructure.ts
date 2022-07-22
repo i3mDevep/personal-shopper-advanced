@@ -62,6 +62,7 @@ export default class DynamoDBService<T> {
   }
 
   getItem = async (key: Record<string, string>): Promise<Result<T>> => {
+    console.log({ key })
     const response = await this.db
       .get({
         TableName: this.tableName,

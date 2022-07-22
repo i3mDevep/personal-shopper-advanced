@@ -4,24 +4,24 @@ import { HttpResponse as Response } from '@shared/http/http.response'
 import { middyfy } from '@shared/helper/middyfy.lambda'
 import { StatePersonalShopper } from '@shared/helper/state.personal-shoper'
 
-import { ClientSerializer } from '../../domain/client.serializer'
-import { ClientModel } from '../../domain/client.model'
-import { ClientInfrastructure } from '../../infrastructure/client.store.infrastructure'
-import { ClientApplication } from '../../application/client.application'
-import { ClientEventInfrastructure } from '../../infrastructure/client.event.infrastructure'
+import { ClientSerializer } from '../../domain/case.serializer'
+import { CaseModel } from '../../domain/case.model'
+import { CaseInfrastructure } from '../../infrastructure/case.store.infrastructure'
+import { CaseApplication } from '../../application/case.application'
+import { CaseEventInfrastructure } from '../../infrastructure/case.event.infrastructure'
 import type { ClientAcceptedSchema, ClientSchema } from './schema'
 
 const tableName = process.env.PERSONAL_SHOPPER_TABLE
 
 class ClientEventAdapter {
-  constructor(private operation: ClientApplication) {}
+  constructor(private operation: CaseApplication) {}
   handleClientCanceled: EventBridgeHandler<
     string,
     typeof ClientSchema,
     unknown
   > = async (event) => {
     const { id, PK, SK } = event.detail
-    const clientModel = new ClientModel(
+    const clientModel = new CaseModel(
       id,
       undefined,
       StatePersonalShopper.CANCELED_UNAVAILABLE_ADVISER
@@ -35,7 +35,7 @@ class ClientEventAdapter {
     )
 
     return Response.response({
-      message: 'Event Bridge Lambda OK ClientEventAdapter',
+      message: 'Event Bridge Lambda OK CaseEventAdapter',
       input: event,
     })
   }
@@ -51,7 +51,7 @@ class ClientEventAdapter {
       },
     } = event.detail
 
-    const clientModel = new ClientModel(
+    const clientModel = new CaseModel(
       client,
       account,
       StatePersonalShopper.ACCEPTED,
@@ -60,7 +60,7 @@ class ClientEventAdapter {
 
     const accontSerializer = new ClientSerializer(clientModel)
 
-    const pk = `${ID.Client}#${client}`
+    const pk = `${ID.Case}#${client}`
 
     await this.operation.updateItem(
       { PK: pk, SK: pk },
@@ -74,9 +74,9 @@ class ClientEventAdapter {
   }
 }
 
-const clientInfrastructure = new ClientInfrastructure(tableName)
-const clientEventInfrastructure = new ClientEventInfrastructure()
-const clientApplication = new ClientApplication(
+const clientInfrastructure = new CaseInfrastructure(tableName)
+const clientEventInfrastructure = new CaseEventInfrastructure()
+const clientApplication = new CaseApplication(
   clientInfrastructure,
   clientEventInfrastructure
 )
